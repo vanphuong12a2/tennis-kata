@@ -36,71 +36,58 @@ class MatchTest extends org.scalatest.FunSpec with MustMatchers {
 
   it("should update match score when player 1 scores 2 points") {
     val aMatch = new Match("player 1", "player 2")
-    aMatch.pointWonBy("player 1")
-    aMatch.pointWonBy("player 1")
+    pointsWonBy(aMatch, "player 1", 2)
     aMatch.score() must be("0-0, 30-0")
   }
 
   it("should update match score when player 2 scores 2 points") {
     val aMatch = new Match("player 1", "player 2")
-    aMatch.pointWonBy("player 2")
-    aMatch.pointWonBy("player 2")
+    pointsWonBy(aMatch, "player 2", 2)
     aMatch.score() must be("0-0, 0-30")
   }
 
   it("should update match score when player 1 scores 1 points & player 2 scores 2 points") {
     val aMatch = new Match("player 1", "player 2")
-    aMatch.pointWonBy("player 1")
-    aMatch.pointWonBy("player 2")
-    aMatch.pointWonBy("player 2")
+    pointsWonBy(aMatch, "player 1", 1)
+    pointsWonBy(aMatch, "player 2", 2)
     aMatch.score() must be("0-0, 15-30")
   }
 
   it("should update match score when player 1 scores 2 points & player 2 scores 1 points") {
     val aMatch = new Match("player 1", "player 2")
-    aMatch.pointWonBy("player 1")
-    aMatch.pointWonBy("player 1")
-    aMatch.pointWonBy("player 2")
+    pointsWonBy(aMatch, "player 1", 2)
+    pointsWonBy(aMatch, "player 2", 1)
     aMatch.score() must be("0-0, 30-15")
   }
 
   it("should update match score when player 1 scores 3 points") {
     val aMatch = new Match("player 1", "player 2")
-    aMatch.pointWonBy("player 1")
-    aMatch.pointWonBy("player 1")
-    aMatch.pointWonBy("player 1")
+    pointsWonBy(aMatch, "player 1", 3)
     aMatch.score() must be("0-0, 40-0")
   }
 
   it("should update match score when player 1 scores 4 points") {
     val aMatch = new Match("player 1", "player 2")
-    aMatch.pointWonBy("player 1")
-    aMatch.pointWonBy("player 1")
-    aMatch.pointWonBy("player 1")
-    aMatch.pointWonBy("player 1")
+    pointsWonBy(aMatch, "player 1", 4)
     aMatch.score() must be("1-0")
   }
 
   it("should update match score when player 2 scores 4 points") {
     val aMatch = new Match("player 1", "player 2")
-    aMatch.pointWonBy("player 2")
-    aMatch.pointWonBy("player 2")
-    aMatch.pointWonBy("player 2")
-    aMatch.pointWonBy("player 2")
-
+    pointsWonBy(aMatch, "player 2", 4)
     aMatch.score() must be("0-1")
   }
 
   it("should update match score to Deuce when both players score 3 points") {
     val aMatch = new Match("player 1", "player 2")
-    aMatch.pointWonBy("player 1")
-    aMatch.pointWonBy("player 1")
-    aMatch.pointWonBy("player 1")
-
-    aMatch.pointWonBy("player 2")
-    aMatch.pointWonBy("player 2")
-    aMatch.pointWonBy("player 2")
-
+    pointsWonBy(aMatch, "player 1", 3)
+    pointsWonBy(aMatch, "player 2", 3)
     aMatch.score() must be("0-0, Deuce")
+  }
+
+  private def pointsWonBy(aMatch: Match, player: String, points: Int): Unit = {
+    (1 to points).foreach(
+      _ => aMatch.pointWonBy(player)
+    )
   }
 }
