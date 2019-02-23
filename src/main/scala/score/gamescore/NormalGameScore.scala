@@ -9,10 +9,14 @@ case class NormalGameScore(point1: Int, point2: Int) extends GameScore {
     gameScore
   }
 
-  private def nextGameScore(scoredPlayer: Int) = {
+  private def nextGameScore(scoredPlayer: Int): GameScore = {
     scoredPlayer match {
-      case 1 => NormalGameScore(nextPoint(point1), point2)
-      case 2 => NormalGameScore(point1, nextPoint(point2))
+      case 1 =>
+        if (point1 == 40) return EmptyGameScore()
+        NormalGameScore(nextPoint(point1), point2)
+      case 2 =>
+        if (point2 == 40) return EmptyGameScore()
+        NormalGameScore(point1, nextPoint(point2))
     }
   }
 

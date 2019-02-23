@@ -72,6 +72,24 @@ class MatchTest extends org.scalatest.FunSpec with MustMatchers {
     aMatch.currentScore() must be("0-0, 40-0")
   }
 
+  it("should update match score when player 1 scores 4 points") {
+    val aMatch = new Match("player 1", "player 2")
+    aMatch.pointWonBy("player 1")
+    aMatch.pointWonBy("player 1")
+    aMatch.pointWonBy("player 1")
+    aMatch.pointWonBy("player 1")
+    aMatch.currentScore() must be("1-0")
+  }
+
+  it("should update match score when player 2 scores 4 points") {
+    val aMatch = new Match("player 1", "player 2")
+    aMatch.pointWonBy("player 2")
+    aMatch.pointWonBy("player 2")
+    aMatch.pointWonBy("player 2")
+    aMatch.pointWonBy("player 2")
+    aMatch.currentScore() must be("0-1")
+  }
+
   it("should update match score to Deuce when both players score 3 points") {
     val aMatch = new Match("player 1", "player 2")
     aMatch.pointWonBy("player 1")

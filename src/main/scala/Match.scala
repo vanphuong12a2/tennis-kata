@@ -1,8 +1,8 @@
-import score.MatchScore
+import score.{MatchScore, Score}
 
 class Match(player1: String, player2: String) {
 
-  private var score: MatchScore = MatchScore("0-0")
+  private var score: Score = Score(MatchScore(0, 0))
 
   def currentScore(): String = score.format()
 

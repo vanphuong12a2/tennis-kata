@@ -1,15 +1,10 @@
 package score
 
-import score.gamescore.{EmptyGameScore, GameScore}
+case class MatchScore(score1: Int, score2: Int) {
+  def format(): String = s"$score1-$score2"
 
-case class MatchScore(matchScore: String, gameScore: GameScore = EmptyGameScore()) {
-
-  def format(): String = gameScore match {
-    case _: EmptyGameScore => matchScore
-    case _ => s"$matchScore, ${gameScore.format()}"
-  }
-
-  def next(scoredPlayer: Int): MatchScore = {
-    MatchScore(matchScore, gameScore.next(scoredPlayer))
+  def next(scoredPlayer: Int): MatchScore = scoredPlayer match {
+    case 1 => MatchScore(score1 + 1, score2)
+    case 2 => MatchScore(score1, score2 + 1)
   }
 }
