@@ -1,7 +1,7 @@
 package score.gamescore
 
-case class NormalGameScore(score1: Int, score2: Int) extends GameScore {
-  override def format(): String = s"$score1-$score2"
+case class NormalGameScore(point1: Int, point2: Int) extends GameScore {
+  override def format(): String = s"$point1-$point2"
 
   override def next(scoredPlayer: Int): GameScore = {
     val gameScore = nextGameScore(scoredPlayer)
@@ -11,12 +11,12 @@ case class NormalGameScore(score1: Int, score2: Int) extends GameScore {
 
   private def nextGameScore(scoredPlayer: Int) = {
     scoredPlayer match {
-      case 1 => NormalGameScore(nextScore(score1), score2)
-      case 2 => NormalGameScore(score1, nextScore(score2))
+      case 1 => NormalGameScore(nextPoint(point1), point2)
+      case 2 => NormalGameScore(point1, nextPoint(point2))
     }
   }
 
-  private def nextScore(score: Int): Int = {
+  private def nextPoint(score: Int): Int = {
     score match {
       case 0 => 15
       case 15 => 30
