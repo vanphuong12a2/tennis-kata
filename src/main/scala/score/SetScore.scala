@@ -13,5 +13,7 @@ case class SetScore(score1: Int, score2: Int) {
     hasPlayer1Won || hasPlayer2Won
   }
 
+  def isTieBreak: Boolean = score1 == 6 && score2 == 6
+
   override def toString: String = s"$score1-$score2"
 }

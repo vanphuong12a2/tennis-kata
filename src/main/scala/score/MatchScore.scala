@@ -6,7 +6,8 @@ case class MatchScore(setScore: SetScore, gameScore: GameScore) {
 
   def update(scoredPlayer: Player, scoredPlayerPosition: Int): MatchScore = {
     if (setScore.isSetFinished) return this
-    val updatedGameScore = gameScore.update(scoredPlayer, scoredPlayerPosition)
+
+    val updatedGameScore = getUpdatedGameScore(scoredPlayer, scoredPlayerPosition)
     val updatedSetScore = getUpdatedSetScore(scoredPlayerPosition, updatedGameScore)
 
     MatchScore(updatedSetScore, updatedGameScore)
@@ -17,6 +18,13 @@ case class MatchScore(setScore: SetScore, gameScore: GameScore) {
       return setScore.update(scoredPlayerPosition)
     }
     setScore
+  }
+
+  private def getUpdatedGameScore(scoredPlayer: Player, scoredPlayerPosition: Int): GameScore = {
+    if(setScore.isTieBreak && gameScore == EmptyGameScore) {
+      return EmptyTieBreakGameScore.update(scoredPlayer, scoredPlayerPosition)
+    }
+    gameScore.update(scoredPlayer, scoredPlayerPosition)
   }
 
   override def toString: String = gameScore match {
