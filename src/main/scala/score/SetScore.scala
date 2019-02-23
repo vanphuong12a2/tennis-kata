@@ -7,7 +7,11 @@ case class SetScore(score1: Int, score2: Int) {
     case 2 => SetScore(score1, score2 + 1)
   }
 
-  def isSetFinished: Boolean = score1 + score2 != 11 && (score2 == 6 || score1 == 6)
+  def isSetFinished: Boolean = {
+    val hasPlayer1Won = score1 >= 6 && score1 - score2 >= 2
+    val hasPlayer2Won = score2 >= 6 && score2 - score1 >= 2
+    hasPlayer1Won || hasPlayer2Won
+  }
 
   override def toString: String = s"$score1-$score2"
 }
