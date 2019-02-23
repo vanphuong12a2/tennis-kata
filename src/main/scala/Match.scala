@@ -1,4 +1,4 @@
-import player.Player
+import domain.Player
 import score.{EmptyGameScore, MatchScore, SetScore}
 
 class Match(player1: Player, player2: Player) {

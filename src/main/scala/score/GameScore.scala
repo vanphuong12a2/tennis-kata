@@ -1,6 +1,6 @@
 package score
 
-import player.Player
+import domain.{Player, TieBreakPoint}
 
 sealed trait GameScore {
   def update(scoredPlayer: Player, scoredPlayerPosition: Int): GameScore
@@ -13,6 +13,7 @@ object EmptyGameScore extends GameScore {
 
   override def toString: String = ""
 }
+
 
 object DeuceGameScore extends GameScore {
   override def update(scoredPlayer: Player, scoredPlayerPosition: Int): GameScore = {
@@ -29,7 +30,7 @@ case class AdvantageGameScore(player: Player) extends GameScore {
     DeuceGameScore
   }
 
-  override def toString: String = s"Advantage ${player.name}"
+  override def toString: String = s"Advantage $player"
 }
 
 
@@ -50,6 +51,7 @@ case class NormalGameScore(point1: Point, point2: Point) extends GameScore {
   override def toString: String = s"$point1-$point2"
 }
 
+
 object EmptyTieBreakGameScore extends GameScore {
   override def update(scoredPlayer: Player, scoredPlayerPosition: Int): GameScore =
     TieBreakGameScore(0, 0).update(scoredPlayer, scoredPlayerPosition)
@@ -57,20 +59,25 @@ object EmptyTieBreakGameScore extends GameScore {
   override def toString: String = ""
 }
 
-case class TieBreakGameScore(point1: Int, point2: Int) extends GameScore {
+
+case class TieBreakGameScore(point1: TieBreakPoint, point2: TieBreakPoint) extends GameScore {
+
+  private val MINIMUM_POINTS_TO_WIN: TieBreakPoint = 7
+  private val MINIMUM_MARGIN_TO_WIN: TieBreakPoint = 2
+
   override def update(scoredPlayer: Player, scoredPlayerPosition: Int): GameScore = {
     val updatedScore = scoredPlayerPosition match {
       case 1 => TieBreakGameScore(point1 + 1, point2)
       case 2 => TieBreakGameScore(point1, point2 + 1)
     }
 
-    if(updatedScore.isTieBreakFinished) return EmptyGameScore
+    if (updatedScore.isTieBreakFinished) return EmptyGameScore
     updatedScore
   }
 
   private def isTieBreakFinished: Boolean = {
-    val hasPlayer1Won = point1 >= 7 && point1 - point2 >= 2
-    val hasPlayer2Won = point2 >= 7 && point2 - point1 >= 2
+    val hasPlayer1Won = point1 >= MINIMUM_POINTS_TO_WIN && point1 - point2 >= MINIMUM_MARGIN_TO_WIN
+    val hasPlayer2Won = point2 >= MINIMUM_POINTS_TO_WIN && point2 - point1 >= MINIMUM_MARGIN_TO_WIN
     hasPlayer1Won || hasPlayer2Won
   }
 

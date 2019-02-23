@@ -1,6 +1,6 @@
 package score
 
-import player.Player
+import domain.Player
 
 case class MatchScore(setScore: SetScore, gameScore: GameScore) {
 
