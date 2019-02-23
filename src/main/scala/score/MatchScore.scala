@@ -1,9 +1,10 @@
 package score
+import player.Player
 
 case class MatchScore(setScore: SetScore, gameScore: GameScore) {
 
-  def update(scoredPlayerPosition: Int): MatchScore = {
-    val updatedGameScore = gameScore.update(scoredPlayerPosition)
+  def update(scoredPlayer: Player, scoredPlayerPosition: Int): MatchScore = {
+    val updatedGameScore = gameScore.update(scoredPlayer, scoredPlayerPosition)
     val updatedSetScore = getUpdatedSetScore(scoredPlayerPosition, updatedGameScore)
 
     MatchScore(updatedSetScore, updatedGameScore)

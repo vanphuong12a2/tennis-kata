@@ -1,46 +1,49 @@
 package score
 
-trait GameScore {
-  def update(scoredPlayerPosition: Int): GameScore
+import player.Player
+
+sealed trait GameScore {
+  def update(scoredPlayer: Player, scoredPlayerPosition: Int): GameScore
 }
 
-case object EmptyGameScore extends GameScore {
-  override def update(scoredPlayer: Int): GameScore =
-    NormalGameScore(ZERO, ZERO).update(scoredPlayer)
+
+object EmptyGameScore extends GameScore {
+  override def update(scoredPlayer: Player, scoredPlayerPosition: Int): GameScore =
+    NormalGameScore(ZERO, ZERO).update(scoredPlayer, scoredPlayerPosition)
 
   override def toString: String = ""
 }
 
-case object DeuceGameScore extends GameScore {
-  override def update(scoredPlayer: Int): GameScore = {
-    EmptyGameScore
+
+object DeuceGameScore extends GameScore {
+  override def update(scoredPlayer: Player, scoredPlayerPosition: Int): GameScore = {
+    AdvantageGameScore(scoredPlayer)
   }
 
   override def toString: String = "Deuce"
 }
 
+
+case class AdvantageGameScore(player: Player) extends GameScore {
+  override def update(scoredPlayer: Player, scoredPlayerPosition: Int): GameScore = {
+    EmptyGameScore
+  }
+
+  override def toString: String = s"Advantage ${player.name}"
+}
+
+
 case class NormalGameScore(point1: Point, point2: Point) extends GameScore {
-
-  override def update(scoredPlayerPosition: Int): GameScore = {
-    scoredPlayerPosition match {
-      case 1 => nextPoint1
-      case 2 => nextPoint2
+  override def update(scoredPlayer: Player, scoredPlayerPosition: Int): GameScore = {
+    val updatedScore = scoredPlayerPosition match {
+      case 1 => NormalGameScore(point1.next(), point2)
+      case 2 => NormalGameScore(point1, point2.next())
     }
-  }
 
-  private def nextPoint2 = {
-    (point1, point2) match {
-      case (FORTY, THIRTY) => DeuceGameScore
-      case (_, FORTY) => EmptyGameScore
-      case _ => NormalGameScore(point1, point2.next())
-    }
-  }
-
-  private def nextPoint1 = {
-    (point1, point2) match {
-      case (THIRTY, FORTY) => DeuceGameScore
-      case (FORTY, _) => EmptyGameScore
-      case _ => NormalGameScore(point1.next(), point2)
+    updatedScore match {
+      case NormalGameScore(FORTY, FORTY) => DeuceGameScore
+      case NormalGameScore(GAME_POINT, _) | NormalGameScore(_, GAME_POINT) => EmptyGameScore
+      case _ => updatedScore
     }
   }
 
