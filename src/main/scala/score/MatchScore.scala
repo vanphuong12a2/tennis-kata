@@ -1,11 +1,23 @@
 package score
 
-case class MatchScore(score1: Int, score2: Int) {
+case class MatchScore(setScore: SetScore, gameScore: GameScore) {
 
-  def next(scoredPlayer: Int): MatchScore = scoredPlayer match {
-    case 1 => MatchScore(score1 + 1, score2)
-    case 2 => MatchScore(score1, score2 + 1)
+  def update(scoredPlayerPosition: Int): MatchScore = {
+    val updatedGameScore = gameScore.update(scoredPlayerPosition)
+    val updatedSetScore = getUpdatedSetScore(scoredPlayerPosition, updatedGameScore)
+
+    MatchScore(updatedSetScore, updatedGameScore)
   }
 
-  override def toString: String = s"$score1-$score2"
+  private def getUpdatedSetScore(scoredPlayerPosition: Int, updatedGameScore: GameScore): SetScore = {
+    if (updatedGameScore == EmptyGameScore) {
+      return setScore.update(scoredPlayerPosition)
+    }
+    setScore
+  }
+
+  override def toString: String = gameScore match {
+    case EmptyGameScore => setScore.toString
+    case _ => s"$setScore, $gameScore"
+  }
 }

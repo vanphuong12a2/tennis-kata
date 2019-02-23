@@ -1,13 +1,14 @@
-import score.{MatchScore, Score}
+import player.Player
+import score.{EmptyGameScore, MatchScore, SetScore}
 
-class Match(player1: String, player2: String) {
+class Match(player1: Player, player2: Player) {
 
-  private var score: Score = Score(MatchScore(0, 0))
+  private var currentScore: MatchScore = MatchScore(SetScore(0, 0), EmptyGameScore)
 
-  def currentScore(): String = score.toString
+  def score(): String = currentScore.toString
 
-  def pointWonBy(player: String): Unit = {
-    if (player == player1) score = score.next(1)
-    if (player == player2) score = score.next(2)
+  def pointWonBy(player: Player): Unit = {
+    if (player == player1) currentScore = currentScore.update(1)
+    if (player == player2) currentScore = currentScore.update(2)
   }
 }
