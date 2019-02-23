@@ -148,6 +148,22 @@ class MatchTest extends org.scalatest.FunSpec with MustMatchers {
     aMatch.score() must be("0-6")
   }
 
+  it("should update match score when player 1 wins with 6 games and player 2 wins 5 games ") {
+    val aMatch = new Match("player 1", "player 2")
+    pointsWonBy(aMatch, "player 2", 20)
+    pointsWonBy(aMatch, "player 1", 24)
+    pointsWonBy(aMatch, "player 1", 1)
+    aMatch.score() must be("6-5, 15-0")
+  }
+
+  it("should update match score when player 2 wins with 6 games and player 1 wins 5 games ") {
+    val aMatch = new Match("player 1", "player 2")
+    pointsWonBy(aMatch, "player 1", 20)
+    pointsWonBy(aMatch, "player 2", 24)
+    pointsWonBy(aMatch, "player 2", 1)
+    aMatch.score() must be("5-6, 0-15")
+  }
+
   private def pointsWonBy(aMatch: Match, player: String, points: Int): Unit = {
     (1 to points).foreach(
       _ => aMatch.pointWonBy(player)
