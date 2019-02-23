@@ -7,5 +7,7 @@ case class SetScore(score1: Int, score2: Int) {
     case 2 => SetScore(score1, score2 + 1)
   }
 
+  def isSetFinished: Boolean = score2 == 6 || score1 == 6
+
   override def toString: String = s"$score1-$score2"
 }

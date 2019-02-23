@@ -26,7 +26,8 @@ object DeuceGameScore extends GameScore {
 
 case class AdvantageGameScore(player: Player) extends GameScore {
   override def update(scoredPlayer: Player, scoredPlayerPosition: Int): GameScore = {
-    EmptyGameScore
+    if (scoredPlayer == player) return EmptyGameScore
+    DeuceGameScore
   }
 
   override def toString: String = s"Advantage ${player.name}"

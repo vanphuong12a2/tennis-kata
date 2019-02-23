@@ -101,6 +101,53 @@ class MatchTest extends org.scalatest.FunSpec with MustMatchers {
     aMatch.score() must be("0-0, Advantage player 2")
   }
 
+  it("should update match score to Deuce when player 2 scores after player 1 has advantage") {
+    val aMatch = new Match("player 1", "player 2")
+    pointsWonBy(aMatch, "player 1", 3)
+    pointsWonBy(aMatch, "player 2", 3)
+    pointsWonBy(aMatch, "player 1", 1)
+    pointsWonBy(aMatch, "player 2", 1)
+    aMatch.score() must be("0-0, Deuce")
+  }
+
+  it("should update match score to Deuce when player 1 scores after player 2 has advantage") {
+    val aMatch = new Match("player 1", "player 2")
+    pointsWonBy(aMatch, "player 1", 3)
+    pointsWonBy(aMatch, "player 2", 3)
+    pointsWonBy(aMatch, "player 2", 1)
+    pointsWonBy(aMatch, "player 1", 1)
+    aMatch.score() must be("0-0, Deuce")
+  }
+
+  it("should update match score when player 1 scores after they has advantage") {
+    val aMatch = new Match("player 1", "player 2")
+    pointsWonBy(aMatch, "player 2", 3)
+    pointsWonBy(aMatch, "player 1", 5)
+    aMatch.score() must be("1-0")
+  }
+
+  it("should update match score when player 2 scores after they has advantage") {
+    val aMatch = new Match("player 1", "player 2")
+    pointsWonBy(aMatch, "player 1", 3)
+    pointsWonBy(aMatch, "player 2", 3)
+    pointsWonBy(aMatch, "player 2", 2)
+    aMatch.score() must be("0-1")
+  }
+
+  it("should not update match score when player 1 wins with 6 games") {
+    val aMatch = new Match("player 1", "player 2")
+    pointsWonBy(aMatch, "player 1", 24)
+    pointsWonBy(aMatch, "player 2", 1)
+    aMatch.score() must be("6-0")
+  }
+
+  it("should not update match score when player 2 wins with 6 games") {
+    val aMatch = new Match("player 1", "player 2")
+    pointsWonBy(aMatch, "player 2", 24)
+    pointsWonBy(aMatch, "player 1", 1)
+    aMatch.score() must be("0-6")
+  }
+
   private def pointsWonBy(aMatch: Match, player: String, points: Int): Unit = {
     (1 to points).foreach(
       _ => aMatch.pointWonBy(player)
