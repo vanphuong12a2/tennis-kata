@@ -196,6 +196,31 @@ class MatchTest extends org.scalatest.FunSpec with MustMatchers {
     aMatch.score() must be("6-6, 0-1")
   }
 
+  it("should not update match score when player 1 wins the tie-break") {
+    val aMatch = new Match("player 1", "player 2")
+    pointsWonBy(aMatch, "player 1", 20)
+    pointsWonBy(aMatch, "player 2", 24)
+    pointsWonBy(aMatch, "player 1", 11)
+    aMatch.score() must be("7-6")
+  }
+
+  it("should not update match score when player 2 wins the tie-break") {
+    val aMatch = new Match("player 1", "player 2")
+    pointsWonBy(aMatch, "player 2", 20)
+    pointsWonBy(aMatch, "player 1", 24)
+    pointsWonBy(aMatch, "player 2", 11)
+    aMatch.score() must be("6-7")
+  }
+
+  it("should update match score when the margin in the tie-break is 1") {
+    val aMatch = new Match("player 1", "player 2")
+    pointsWonBy(aMatch, "player 2", 20)
+    pointsWonBy(aMatch, "player 1", 24)
+    pointsWonBy(aMatch, "player 2", 10)
+    pointsWonBy(aMatch, "player 1", 7)
+    aMatch.score() must be("6-6, 7-6")
+  }
+
   private def pointsWonBy(aMatch: Match, player: String, points: Int): Unit = {
     (1 to points).foreach(
       _ => aMatch.pointWonBy(player)

@@ -59,10 +59,19 @@ object EmptyTieBreakGameScore extends GameScore {
 
 case class TieBreakGameScore(point1: Int, point2: Int) extends GameScore {
   override def update(scoredPlayer: Player, scoredPlayerPosition: Int): GameScore = {
-    scoredPlayerPosition match {
+    val updatedScore = scoredPlayerPosition match {
       case 1 => TieBreakGameScore(point1 + 1, point2)
       case 2 => TieBreakGameScore(point1, point2 + 1)
     }
+
+    if(updatedScore.isTieBreakFinished) return EmptyGameScore
+    updatedScore
+  }
+
+  private def isTieBreakFinished: Boolean = {
+    val hasPlayer1Won = point1 >= 7 && point1 - point2 >= 2
+    val hasPlayer2Won = point2 >= 7 && point2 - point1 >= 2
+    hasPlayer1Won || hasPlayer2Won
   }
 
   override def toString: String = s"$point1-$point2"
