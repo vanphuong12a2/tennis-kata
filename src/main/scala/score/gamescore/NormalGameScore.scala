@@ -1,30 +1,23 @@
 package score.gamescore
 
-case class NormalGameScore(point1: Int, point2: Int) extends GameScore {
-  override def format(): String = s"$point1-$point2"
+case class NormalGameScore(point1: Point, point2: Point) extends GameScore {
 
   override def next(scoredPlayer: Int): GameScore = {
     val gameScore = nextGameScore(scoredPlayer)
-    if (gameScore == NormalGameScore(40, 40)) return DeuceGameScore()
+    if (gameScore == NormalGameScore(FORTY, FORTY)) return DeuceGameScore
     gameScore
   }
+
+  override def toString: String = s"$point1-$point2"
 
   private def nextGameScore(scoredPlayer: Int): GameScore = {
     scoredPlayer match {
       case 1 =>
-        if (point1 == 40) return EmptyGameScore()
-        NormalGameScore(nextPoint(point1), point2)
+        if (point1 == FORTY) return EmptyGameScore
+        NormalGameScore(point1.next(), point2)
       case 2 =>
-        if (point2 == 40) return EmptyGameScore()
-        NormalGameScore(point1, nextPoint(point2))
-    }
-  }
-
-  private def nextPoint(score: Int): Int = {
-    score match {
-      case 0 => 15
-      case 15 => 30
-      case 30 => 40
+        if (point2 == FORTY) return EmptyGameScore
+        NormalGameScore(point1, point2.next())
     }
   }
 }

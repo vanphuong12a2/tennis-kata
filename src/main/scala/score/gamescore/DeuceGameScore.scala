@@ -1,9 +1,10 @@
 package score.gamescore
 
-case class DeuceGameScore() extends GameScore {
-  override def format(): String = "Deuce"
+case object DeuceGameScore extends GameScore {
 
   override def next(scoredPlayer: Int): GameScore = {
-    EmptyGameScore()
+    EmptyGameScore
   }
+
+  override def toString: String = "Deuce"
 }
