@@ -1,9 +1,9 @@
 import domain.Player
-import score.{EmptyGameScore, MatchScore, SetScore}
+import score.MatchScore
 
 class Match(player1: Player, player2: Player) {
 
-  private var currentScore: MatchScore = MatchScore(SetScore(0, 0), EmptyGameScore)
+  private var currentScore: MatchScore = MatchScore.initialMatchScore
 
   def score(): String = currentScore.toString
 

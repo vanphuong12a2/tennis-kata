@@ -1,33 +1,33 @@
 package score
 
-sealed trait Point {
-  def next(): Point
+sealed trait GamePoint {
+  def next(): GamePoint
 }
 
-case object ZERO extends Point {
-  def next(): Point = FIFTEEN
+case object ZERO extends GamePoint {
+  def next(): GamePoint = FIFTEEN
 
   override def toString: String = "0"
 }
 
-case object FIFTEEN extends Point {
-  def next(): Point = THIRTY
+case object FIFTEEN extends GamePoint {
+  def next(): GamePoint = THIRTY
 
   override def toString: String = "15"
 }
 
-case object THIRTY extends Point {
-  def next(): Point = FORTY
+case object THIRTY extends GamePoint {
+  def next(): GamePoint = FORTY
 
   override def toString: String = "30"
 }
 
-case object FORTY extends Point {
-  def next(): Point = GAME_POINT
+case object FORTY extends GamePoint {
+  def next(): GamePoint = GAME
 
   override def toString: String = "40"
 }
 
-case object GAME_POINT extends Point {
-  def next(): Point = GAME_POINT
+case object GAME extends GamePoint {
+  def next(): GamePoint = GAME
 }

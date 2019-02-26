@@ -4,16 +4,35 @@ import domain.{Player, TieBreakPoint}
 
 sealed trait GameScore {
   def update(scoredPlayer: Player, scoredPlayerPosition: Int): GameScore
+
+  def hasGameFinished: Boolean = this == EmptyGameScore
 }
 
+object GameScore {
+  def initialGameScore: GameScore = EmptyGameScore
+  def initialTieBreakGameScore: GameScore = EmptyTieBreakGameScore
+}
 
-object EmptyGameScore extends GameScore {
-  override def update(scoredPlayer: Player, scoredPlayerPosition: Int): GameScore =
-    NormalGameScore(ZERO, ZERO).update(scoredPlayer, scoredPlayerPosition)
+case class NormalGameScore(point1: GamePoint, point2: GamePoint) extends GameScore {
+  override def update(scoredPlayer: Player, scoredPlayerPosition: Int): GameScore = {
+    val updatedScore = scoredPlayerPosition match {
+      case 1 => NormalGameScore(point1.next(), point2)
+      case 2 => NormalGameScore(point1, point2.next())
+    }
 
+    updatedScore match {
+      case NormalGameScore(FORTY, FORTY) => DeuceGameScore
+      case NormalGameScore(GAME, _) | NormalGameScore(_, GAME) => EmptyGameScore
+      case _ => updatedScore
+    }
+  }
+
+  override def toString: String = s"$point1-$point2"
+}
+
+object EmptyGameScore extends NormalGameScore(ZERO, ZERO) {
   override def toString: String = ""
 }
-
 
 object DeuceGameScore extends GameScore {
   override def update(scoredPlayer: Player, scoredPlayerPosition: Int): GameScore = {
@@ -23,7 +42,6 @@ object DeuceGameScore extends GameScore {
   override def toString: String = "Deuce"
 }
 
-
 case class AdvantageGameScore(player: Player) extends GameScore {
   override def update(scoredPlayer: Player, scoredPlayerPosition: Int): GameScore = {
     if (scoredPlayer == player) return EmptyGameScore
@@ -31,32 +49,6 @@ case class AdvantageGameScore(player: Player) extends GameScore {
   }
 
   override def toString: String = s"Advantage $player"
-}
-
-
-case class NormalGameScore(point1: Point, point2: Point) extends GameScore {
-  override def update(scoredPlayer: Player, scoredPlayerPosition: Int): GameScore = {
-    val updatedScore = scoredPlayerPosition match {
-      case 1 => NormalGameScore(point1.next(), point2)
-      case 2 => NormalGameScore(point1, point2.next())
-    }
-
-    updatedScore match {
-      case NormalGameScore(FORTY, FORTY) => DeuceGameScore
-      case NormalGameScore(GAME_POINT, _) | NormalGameScore(_, GAME_POINT) => EmptyGameScore
-      case _ => updatedScore
-    }
-  }
-
-  override def toString: String = s"$point1-$point2"
-}
-
-
-object EmptyTieBreakGameScore extends GameScore {
-  override def update(scoredPlayer: Player, scoredPlayerPosition: Int): GameScore =
-    TieBreakGameScore(0, 0).update(scoredPlayer, scoredPlayerPosition)
-
-  override def toString: String = ""
 }
 
 
@@ -82,4 +74,8 @@ case class TieBreakGameScore(point1: TieBreakPoint, point2: TieBreakPoint) exten
   }
 
   override def toString: String = s"$point1-$point2"
+}
+
+object EmptyTieBreakGameScore extends TieBreakGameScore(0, 0) {
+  override def toString: String = ""
 }
