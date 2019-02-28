@@ -1,5 +1,9 @@
 package object domain {
-  type Player = String
   type SetPoint = Int
   type TieBreakPoint = Int
+
+  object PlayerPosition extends Enumeration {
+    type PlayerPosition = Value
+    val ONE, TWO = Value
+  }
 }

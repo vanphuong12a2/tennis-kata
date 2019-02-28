@@ -1,24 +1,28 @@
 package score
 
-import domain.Player
+import player.Player
 
 case class MatchScore(setScore: SetScore, gameScore: GameScore) {
 
-  def update(scoredPlayer: Player, scoredPlayerPosition: Int): MatchScore = {
+  def update(scoredPlayer: Player): MatchScore = {
     if (setScore.isSetFinished) return this
 
-    val updatedGameScore = gameScore.update(scoredPlayer, scoredPlayerPosition)
-    val updatedSetScore = getUpdatedSetState(scoredPlayerPosition, updatedGameScore)
+    val updatedGameScore = gameScore.update(scoredPlayer)
+    val updatedSetScore = getUpdatedSetScore(scoredPlayer, updatedGameScore)
 
+    getUpdatedMatchScore(updatedSetScore, updatedGameScore)
+  }
+
+  private def getUpdatedMatchScore(updatedSetScore: SetScore, updatedGameScore: GameScore): MatchScore = {
     if (updatedSetScore.isTieBreak && updatedGameScore.hasGameFinished) {
       return MatchScore(updatedSetScore, GameScore.initialTieBreakGameScore)
     }
     MatchScore(updatedSetScore, updatedGameScore)
   }
 
-  private def getUpdatedSetState(scoredPlayerPosition: Int, updatedGameScore: GameScore): SetScore = {
+  private def getUpdatedSetScore(scoredPlayer: Player, updatedGameScore: GameScore): SetScore = {
     if (updatedGameScore.hasGameFinished) {
-      return setScore.update(scoredPlayerPosition)
+      return setScore.update(scoredPlayer)
     }
     setScore
   }

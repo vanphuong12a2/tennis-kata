@@ -1,15 +1,17 @@
 package score
 
+import domain.PlayerPosition.{ONE, TWO}
 import domain.SetPoint
+import player.Player
 
 case class SetScore(point1: SetPoint, point2: SetPoint) {
 
   private val MINIMUM_POINTS_TO_WIN: SetPoint = 6
   private val MINIMUM_MARGIN_TO_WIN: SetPoint = 2
 
-  def update(scoredPlayerPosition: Int): SetScore = scoredPlayerPosition match {
-    case 1 => SetScore(point1 + 1, point2)
-    case 2 => SetScore(point1, point2 + 1)
+  def update(scoredPlayer: Player): SetScore = scoredPlayer.position match {
+    case ONE => SetScore(point1 + 1, point2)
+    case TWO => SetScore(point1, point2 + 1)
   }
 
   def isSetFinished: Boolean = {
@@ -24,5 +26,5 @@ case class SetScore(point1: SetPoint, point2: SetPoint) {
 }
 
 object SetScore {
-  def initialSetScore: SetScore = SetScore(0,0)
+  def initialSetScore: SetScore = SetScore(0, 0)
 }
