@@ -1,8 +1,9 @@
 package score
 
 import player.Player
+import visitor.{MatchScorePart, MatchScoreVisitor}
 
-case class MatchScore(setScore: SetScore, gameScore: GameScore) {
+case class MatchScore(setScore: SetScore, gameScore: GameScore) extends MatchScorePart {
 
   def update(scoredPlayer: Player): MatchScore = {
     if (setScore.isSetFinished) return this
@@ -27,9 +28,10 @@ case class MatchScore(setScore: SetScore, gameScore: GameScore) {
     setScore
   }
 
-  override def toString: String = gameScore match {
-    case EmptyGameScore => setScore.toString
-    case _ => s"$setScore, $gameScore"
+  override def accept(matchScoreVisitor: MatchScoreVisitor): Unit = {
+    matchScoreVisitor.visit(this)
+    setScore.accept(matchScoreVisitor)
+    gameScore.accept(matchScoreVisitor)
   }
 }
 

@@ -3,8 +3,9 @@ package score
 import domain.PlayerPosition.{ONE, TWO}
 import domain.SetPoint
 import player.Player
+import visitor.{MatchScorePart, MatchScoreVisitor}
 
-case class SetScore(point1: SetPoint, point2: SetPoint) {
+case class SetScore(point1: SetPoint, point2: SetPoint) extends MatchScorePart {
 
   private val MINIMUM_POINTS_TO_WIN: SetPoint = 6
   private val MINIMUM_MARGIN_TO_WIN: SetPoint = 2
@@ -22,7 +23,9 @@ case class SetScore(point1: SetPoint, point2: SetPoint) {
 
   def isTieBreak: Boolean = point1 == MINIMUM_POINTS_TO_WIN && point2 == MINIMUM_POINTS_TO_WIN
 
-  override def toString: String = s"$point1-$point2"
+  override def accept(matchScoreVisitor: MatchScoreVisitor): Unit = {
+    matchScoreVisitor.visit(this)
+  }
 }
 
 object SetScore {

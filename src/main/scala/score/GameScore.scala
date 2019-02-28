@@ -3,16 +3,23 @@ package score
 import domain.PlayerPosition.{ONE, TWO}
 import domain.TieBreakPoint
 import player.Player
+import visitor.{MatchScorePart, MatchScoreVisitor}
 
-sealed trait GameScore {
+sealed trait GameScore extends MatchScorePart{
   def update(scoredPlayer: Player): GameScore
 
   def hasGameFinished: Boolean = this == EmptyGameScore
 
-  override def toString: String = ""
+  override def accept(matchScoreVisitor: MatchScoreVisitor): Unit = {
+    matchScoreVisitor.visit(this)
+  }
 }
 
-object EmptyGameScore extends NormalGameScore(ZERO, ZERO)
+object EmptyGameScore extends NormalGameScore(ZERO, ZERO) {
+  override def accept(matchScoreVisitor: MatchScoreVisitor): Unit = {
+    matchScoreVisitor.visit(this)
+  }
+}
 
 case class NormalGameScore(point1: GamePoint, point2: GamePoint) extends GameScore {
   override def update(scoredPlayer: Player): GameScore = {
@@ -28,15 +35,17 @@ case class NormalGameScore(point1: GamePoint, point2: GamePoint) extends GameSco
     }
   }
 
-  override def toString: String = s"$point1-$point2"
+  override def accept(matchScoreVisitor: MatchScoreVisitor): Unit = {
+    matchScoreVisitor.visit(this)
+    point1.accept(matchScoreVisitor)
+    point2.accept(matchScoreVisitor)
+  }
 }
 
 object DeuceGameScore extends GameScore {
   override def update(scoredPlayer: Player): GameScore = {
     AdvantageGameScore(scoredPlayer)
   }
-
-  override def toString: String = "Deuce"
 }
 
 case class AdvantageGameScore(player: Player) extends GameScore {
@@ -44,11 +53,13 @@ case class AdvantageGameScore(player: Player) extends GameScore {
     if (scoredPlayer == player) return EmptyGameScore
     DeuceGameScore
   }
-
-  override def toString: String = s"Advantage $player"
 }
 
-object EmptyTieBreakGameScore extends TieBreakGameScore(0, 0)
+object EmptyTieBreakGameScore extends TieBreakGameScore(0, 0) {
+  override def accept(matchScoreVisitor: MatchScoreVisitor): Unit = {
+    matchScoreVisitor.visit(this)
+  }
+}
 
 case class TieBreakGameScore(point1: TieBreakPoint, point2: TieBreakPoint) extends GameScore {
 
@@ -70,8 +81,6 @@ case class TieBreakGameScore(point1: TieBreakPoint, point2: TieBreakPoint) exten
     val hasPlayer2Won = point2 >= MINIMUM_POINTS_TO_WIN && point2 - point1 >= MINIMUM_MARGIN_TO_WIN
     hasPlayer1Won || hasPlayer2Won
   }
-
-  override def toString: String = s"$point1-$point2"
 }
 
 object GameScore {
